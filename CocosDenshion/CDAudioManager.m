@@ -744,6 +744,18 @@ static BOOL configured = FALSE;
     }
 }
 
+// iOS >= 6.0 only
+- (void)interruption:(NSNotification*)notification
+{
+    NSDictionary *interuptionDict = notification.userInfo;
+    NSUInteger interuptionType = (NSUInteger)[interuptionDict valueForKey:AVAudioSessionInterruptionTypeKey];
+    
+    if (interuptionType == AVAudioSessionInterruptionTypeBegan)
+        [self beginInterruption];
+    else if (interuptionType == AVAudioSessionInterruptionTypeEnded)
+        [self endInterruptionWithOptions:(AVAudioSessionInterruptionOptions)[interuptionDict valueForKey:AVAudioSessionInterruptionOptionKey]];
+}
+
 #endif
 
 -(void)audioSessionInterrupted
@@ -813,18 +825,6 @@ static BOOL configured = FALSE;
 +(void) end {
 	[sharedManager release];
 	sharedManager = nil;
-}
-
-// iOS >= 6.0 only
-- (void)interruption:(NSNotification*)notification
-{
-    NSDictionary *interuptionDict = notification.userInfo;
-    NSUInteger interuptionType = (NSUInteger)[interuptionDict valueForKey:AVAudioSessionInterruptionTypeKey];
-    
-    if (interuptionType == AVAudioSessionInterruptionTypeBegan)
-        [self beginInterruption];
-    else if (interuptionType == AVAudioSessionInterruptionTypeEnded)
-        [self endInterruptionWithOptions:(AVAudioSessionInterruptionOptions)[interuptionDict valueForKey:AVAudioSessionInterruptionOptionKey]];
 }
 
 @end
